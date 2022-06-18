@@ -1,0 +1,55 @@
+buildscript {
+	dependencies {
+		classpath "org.openapitools:openapi-generator-gradle-plugin:5.0.0"
+	}
+}
+
+plugins {
+	id 'org.springframework.boot' version '2.7.0'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id "org.openapi.generator" version "6.0.0"
+}
+
+group = 'com.myapp'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'junit:junit:4.13.2'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+	// https://mvnrepository.com/artifact/org.junit.platform/junit-platform-suite-engine
+	testImplementation group: 'org.junit.platform', name: 'junit-platform-suite-engine', version: '1.8.2'
+	implementation 'org.junit.platform:junit-platform-suite-engine:1.9.0-M1'
+	implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.9'
+// https://mvnrepository.com/artifact/org.junit.platform/junit-platform-gradle-plugin
+	implementation group: 'org.junit.platform', name: 'junit-platform-gradle-plugin', version: '1.0.3'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+//
+openApiGenerate {
+	generatorName = "spring"
+	inputSpec = "$rootDir/src/main/resources/petstore.yaml".toString()
+	outputDir = "$buildDir/generated".toString()
+	apiPackage = "org.openapi.example.api"
+	invokerPackage = "org.openapi.example.invoker"
+	modelPackage = "org.openapi.example.model"
+	configOptions = [
+			//library: "spring-cloud"
+			dateLibrary: "java8",
+			skipOverwrite: "false"
+	]
+}
+compileJava.dependsOn tasks.openApiGenerate
